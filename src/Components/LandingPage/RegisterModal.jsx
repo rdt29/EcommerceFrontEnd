@@ -5,16 +5,15 @@ import { NavLink } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Button from "react-bootstrap-button-loader";
 import { useDispatch, useSelector } from "react-redux";
-import { RegisterUser, ViewResponse } from "../Action/Action";
+import { UserRegister } from "../Action/Users";
 
 export default function RegisterModal() {
   const [UserData, setUserData] = useState({
     Name: "",
     Email: "",
   });
-
+  const Response = useSelector((st) => st.Users);
   const handleChange = (dets) => {
-    dispatch(ViewResponse("false"));
     var value = dets.target.value;
 
     var name = dets.target.name;
@@ -26,30 +25,17 @@ export default function RegisterModal() {
       };
     });
   };
-  const res = useSelector((st) => st.Register);
+
   useEffect(() => {
-    const btn = document.getElementById("CloseBtn");
-    if (res.view == "true") {
-      console.log("view");
-      if (res.error) {
-        toast.error(res.error, {
-          autoClose: 3000,
-        });
-        setUserData({ Name: "", Email: "" });
-        setTimeout(() => {
-          btn.click();
-        }, 1000);
-      } else {
-        toast.success(`Registered Successfully !  UserId ${res.res.id}`, {
-          autoClose: 3000,
-        });
-        setUserData({ Name: "", Email: "" });
-        setTimeout(() => {
-          btn.click();
-        }, 1000);
-      }
-    }
-  }, [res]);
+    setTimeout(() => {
+      const btn = document.getElementById("CloseBtn");
+      btn.click();
+      setUserData({
+        Name: "",
+        Email: "",
+      });
+    }, 1500);
+  }, [Response.data]);
   const dispatch = useDispatch();
 
   const Register = () => {
@@ -58,43 +44,10 @@ export default function RegisterModal() {
         autoClose: 3000,
       });
     } else {
-      dispatch(RegisterUser(UserData));
+      dispatch(UserRegister(UserData));
     }
   };
-
-  // const Register = async (dets) => {
-  //   dets.preventDefault();
-  //   if (UserData.Name == "" || UserData.Email == "") {
-  //     toast.error("Enter Details !", {
-  //       autoClose: 3000,
-  //     });
-  //   } else {
-  //     setLoader("true");
-  //     setTimeout(async () => {
-  //       await axios
-  //         .post("https://localhost:7277/api/Users/add/customer", {
-  //           id: 0,
-  //           name: `${UserData.Name}`,
-  //           email: `${UserData.Email}`,
-  //         })
-  //         .then((res) => {
-  //           setResponse(res.data);
-  //           setLoader("false");
-  //           setUserData({
-  //             Name: "",
-  //             Email: "",
-  //           });
-  //           toast.success(`Registered Successfully ! UserId ${res.data.id}`);
-  //           setTimeout(()=>{
-  //             const btn = document.getElementById("CloseBtn");
-  //             btn.click();
-  //           }, 4900)
-  //         })
-  //         .catch((err) =>toast.error(err.message));
-  //     }, 3000);
-  //   }
-  // };
-
+  // console.log("Response", Response);
   return (
     <div>
       {/* <!-- Button trigger modal --> */}
@@ -106,7 +59,7 @@ export default function RegisterModal() {
       <div
         className="modal fade"
         id="registerModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="registerModalLabel"
         aria-hidden="true"
       >
@@ -160,6 +113,7 @@ export default function RegisterModal() {
                         placeholder="Full name"
                         type="text"
                         onChange={handleChange}
+                        autoComplete="true"
                       />
                     </div>
                     {/* <!-- form-group// --> */}
@@ -174,6 +128,7 @@ export default function RegisterModal() {
                         placeholder="Email address"
                         type="email"
                         onChange={handleChange}
+                        autoComplete="true"
                       />
                     </div>
                     {/* <!-- form-group// --> */}
@@ -185,7 +140,7 @@ export default function RegisterModal() {
 
                     <div className="form-group">
                       <Button
-                        loading={res.loading == "true" ? true : false}
+                        loading={Response.isLoading == true ? true : false}
                         onClick={Register}
                         className="btn btn-primary btn-block"
                       >
@@ -214,7 +169,7 @@ export default function RegisterModal() {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <tainer />
     </div>
   );
 }

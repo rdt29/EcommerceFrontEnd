@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, redirect, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,11 +17,7 @@ export default function LoginModel() {
   const [Token, setToken] = useState();
   const [Loader, setLoader] = useState("false");
   const dispatch = useDispatch();
-  // const [TokenData, setTokenData] = useState({
-  //   Name: "",
-  //   UserID: "",
-  //   Role: "",
-  // });
+
   const Navigate = useNavigate();
 
   const handleChange = (dets) => {
@@ -34,6 +30,7 @@ export default function LoginModel() {
       };
     });
   };
+
 
   const Login = async () => {
     if (Details.UserID === "" || Details.username === "") {
@@ -56,18 +53,19 @@ export default function LoginModel() {
           )
           .then((res) => res.data)
           .then((token) => {
+            console.log('token', token)
             if (token == "No user Found") {
               toast.error(token);
-              // console.log("errorr")
+              // // console.log("errorr")
               setLoader("false");
             } else {
               setToken(token);
               setLoader("false");
-              decode();
+              decode(token);
             }
           })
           .catch((err) => {
-            // console.log("err: ", err);
+            // // console.log("err: ", err);
 
             toast.error(err.message);
           });
@@ -75,14 +73,15 @@ export default function LoginModel() {
       }, 3000);
     }
   };
-  const decode = () => {
+  const decode = (Token) => {
+    console.log('Token', Token)
     if (Token) {
       var decoded = jwt_decode(Token);
       var data = Object.values(decoded);
       localStorage.setItem("Token", Token);
 
-      dispatch(UserName(data[0]));
-      dispatch(UserRole(data[2]));
+      // dispatch(UserName(data[0]));
+      // dispatch(UserRole(data[2]));
       localStorage.setItem("userName", data[0]);
       localStorage.setItem("userRole", data[2]);
       var btn = document.getElementById("modalclose");
@@ -100,7 +99,7 @@ export default function LoginModel() {
   return (
     <div>
       {/* <!-- Button trigger modal --> */}
-      <li type="button" data-bs-toggle="modal" data-bs-target="#LoginModal">
+      <li type="button" id="ModalOpen" data-bs-toggle="modal" data-bs-target="#LoginModal">
         Login
       </li>
 
@@ -108,7 +107,7 @@ export default function LoginModel() {
       <div
         className="modal fade"
         id="LoginModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="LoginModalLabel"
         aria-hidden="true"
       >
@@ -129,6 +128,9 @@ export default function LoginModel() {
               <form>
                 {/* <!-- name input --> */}
                 <div className="form-outline mb-4">
+                  {/* <label className="form-label" htmlFor=" Name">
+                    Name
+                  </label>
                   <input
                     type="text"
                     id="Name"
@@ -136,14 +138,14 @@ export default function LoginModel() {
                     className="form-control"
                     onChange={handleChange}
                     required
-                  />
-                  <label className="form-label" for=" Name">
-                    Name
-                  </label>
+                  /> */}
                 </div>
 
                 {/* <!-- userid input --> */}
                 <div className="form-outline mb-4">
+                  <label className="form-label" htmlFor="userid">
+                    UserId
+                  </label>
                   <input
                     type="password"
                     id="userid"
@@ -152,9 +154,6 @@ export default function LoginModel() {
                     onChange={handleChange}
                     required
                   />
-                  <label className="form-label" for="userid">
-                    UserId
-                  </label>
                 </div>
 
                 <Button
@@ -178,7 +177,7 @@ export default function LoginModel() {
           </div>
         </div>
       </div>
-      <ToastContainer autoClose={3000} />
+      {/* <ToastContainer autoClose={3000} /> */}
     </div>
   );
 }

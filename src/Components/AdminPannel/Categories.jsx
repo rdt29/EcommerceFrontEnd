@@ -1,31 +1,33 @@
 import { CSpinner } from "@coreui/react";
-import axios from "axios";
+
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { CategoriesApi } from "../../Api/Api";
-import CategoriesEdit from "./CategoriesEdit";
 import { useDispatch, useSelector } from "react-redux";
-import { FetchCategories } from "../Action/Action";
+import { FetchCategories } from "../Action/Categories";
+import CategoriesEdit from "./CategoriesEdit";
+import CategoriesDelete from "./CategoriesDelete";
+import CategoriesAdd from "./CategoriesAdd";
 
 export default function Categories() {
   const dispatch = useDispatch();
-  const seldata = useSelector((st) => st.FetchCategories);
-
-  const [Loader, setLoader] = useState("true");
-  useEffect(() => {
-    // categories();
-
-    dispatch(FetchCategories());
-    setTimeout(() => {
-      setLoader("false");
-    }, 5000);
-  }, []);
-  const [Data, setData] = useState([]);
-  const [view, setview] = useState("false");
+  const [view, setview] = useState(false);
   const [clickedData, setclickedData] = useState({});
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const Response = useSelector((state) => state.Categories);
+
+  const [deleteData, setDeleteData] = useState({
+    name: "",
+    id: "",
+  });
+
+  const [newCategoryModal, setNewCategoryModal] = useState(false);
+
+  useEffect(() => {
+    dispatch(FetchCategories());
+  }, []);
+
   const handleEdit = (name, id) => {
-    // console.log("name: ", name);
     setclickedData((prev) => {
       return {
         ...prev,
@@ -33,17 +35,16 @@ export default function Categories() {
         id: id,
       };
     });
-    setview("true");
+    setview(true);
   };
 
-  if (Loader == "true") {
+  if (Response.isLoading) {
     return (
       <div
         style={{
           position: "fixed",
           height: "100vh ",
           width: "100%",
-
           backgroundColor: "rgba(0, 0, 0, 0.455)",
           display: "flex",
           justifyContent: "center",
@@ -60,11 +61,19 @@ export default function Categories() {
   } else {
     return (
       <div>
+        <button
+          className="btn btn-success"
+          onClick={() => {
+            setNewCategoryModal(true);
+          }}
+        >
+          Add New{" "}
+        </button>
         <center>
           {" "}
           <h4>List OF Categories</h4>
         </center>
-        <table class="table table-bordered">
+        <table className="table table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -75,15 +84,13 @@ export default function Categories() {
             </tr>
           </thead>
           <tbody>
-            {seldata.cat.map((categories, index) => {
+            {Response.data.map((categories, index) => {
               return (
                 <tr>
                   <th scope="row">{index + 1}</th>
                   <td>{categories.id}</td>
                   <td>{categories.categoryName}</td>
-                  {/* <td>
-                    <CategoriesEdit name={categories.categoryName} id={index} />
-                  </td> */}
+
                   <td>
                     <button
                       onClick={() =>
@@ -95,14 +102,37 @@ export default function Categories() {
                     </button>
                   </td>
                   <td>
-                    <button className="btn btn-danger">Delete</button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => {
+                        setDeleteConfirmation(true);
+                        setDeleteData(() => {
+                          return {
+                            id: categories.id,
+                            name: categories.categoryName,
+                          };
+                        });
+                      }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-        {view == "true" && <CategoriesEdit fnc={setview} name={clickedData} />}
+        {view && <CategoriesEdit fnc={setview} name={clickedData} />}
+        {deleteConfirmation && (
+          <CategoriesDelete
+            deleteConfirmation={setDeleteConfirmation}
+            data={deleteData}
+          />
+        )}
+
+        {newCategoryModal && (
+          <CategoriesAdd categorymodal={setNewCategoryModal} />
+        )}
       </div>
     );
   }

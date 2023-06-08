@@ -8,7 +8,7 @@ export default function LandingPage() {
         <div className="container mt-5">
           <h1>Welcome to My Ecommerce Store</h1>
           <p>Discover amazing products at unbeatable prices.</p>
-          <NavLink to = "/products" className="btn btn-primary btn-lg mb-5 mt-5">
+          <NavLink to="/products" className="btn btn-primary btn-lg mb-5 mt-5">
             Shop Now
           </NavLink>
         </div>
@@ -30,10 +30,9 @@ export default function LandingPage() {
                   <p className="card-text">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   </p>
-                  <NavLink to = "" className="btn btn-primary">
+                  <NavLink to="" className="btn btn-primary">
                     Add to Cart
                   </NavLink>
-                  
                 </div>
               </div>
             </div>
@@ -49,7 +48,7 @@ export default function LandingPage() {
                   <p className="card-text">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   </p>
-                  <NavLink to = "" className="btn btn-primary">
+                  <NavLink to="" className="btn btn-primary">
                     Add to Cart
                   </NavLink>
                 </div>
@@ -67,7 +66,7 @@ export default function LandingPage() {
                   <p className="card-text">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   </p>
-                  <NavLink to = "" className="btn btn-primary">
+                  <NavLink to="" className="btn btn-primary">
                     Add to Cart
                   </NavLink>
                 </div>

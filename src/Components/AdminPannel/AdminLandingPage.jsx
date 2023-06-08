@@ -52,7 +52,7 @@ export default function AdminLandingPage() {
                       This is the description of Suppliers.
                     </p>
 
-                    <NavLink to="#" className="btn btn-primary">
+                    <NavLink to="/admin/getallsupplier" className="btn btn-primary">
                       View
                     </NavLink>
                   </div>

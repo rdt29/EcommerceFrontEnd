@@ -3,41 +3,27 @@ import axios from "axios";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { getalluserApi } from "../../Api/Api";
+import { useDispatch, useSelector } from "react-redux";
+import { UserFetch } from "../Action/Users";
+import { ToastBody } from "react-bootstrap";
+import AddSupplier from "./AddSupplier";
 
 export default function GetAllUsers() {
-  const [loading, setloading] = useState("false");
-  const [Data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const Response = useSelector((st) => st.Users);
+  const addSupplierResponse = useSelector((st) => st.Supplier);
+
+  const [Role, setRole] = useState("allUsers");
+  const [newSupplierModal, setNewSupplierModal] = useState(false);
+
   useEffect(() => {
-    users();
-  }, []);
-  const users = async () => {
-    setloading("true");
+    dispatch(UserFetch());
+    setRole("allUsers");
+  }, [newSupplierModal]);
 
-    if (localStorage.getItem("Token")) {
-      setTimeout(async () => {
-        await axios
-          .get(getalluserApi, {
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("Token"),
-            },
-          })
-          .then((data) => {
-            setData(data.data);
-            setloading("false");
-          })
-          .catch((err) => console.log(err));
-      }, 3000);
-    } else {
-      toast.error("Unauthorized", {
-        autoClose: 3000,
-      });
-      //   setloading("false");
-    }
-  };
-
-  if (loading === "true") {
+  if (Response.isLoading || addSupplierResponse.isLoading) {
     return (
       <div
         style={{
@@ -46,22 +32,56 @@ export default function GetAllUsers() {
           width: "100%",
 
           backgroundColor: "rgba(0, 0, 0, 0.455)",
-          display:"flex",
-          justifyContent:"center",
-          alignItems:"center"
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <CSpinner style={{height: "50px" , width:"50px"}} size="lg" variant="grow" />\
+        <CSpinner
+          style={{ height: "50px", width: "50px" }}
+          size="lg"
+          variant="grow"
+        />
       </div>
     );
   } else {
     return (
       <div>
+        {" "}
+        <button
+          className="btn btn-success"
+          onClick={() => {
+            setNewSupplierModal(true);
+          }}
+        >
+          Add New Supplier{" "}
+        </button>
         <center>
           {" "}
           <h4>List OF Users</h4>
         </center>
-        <table class="table table-bordered">
+        <br />
+        <br />
+        <select
+          className="form-select form-select-lg mb-3"
+          aria-label=".form-select-lg example"
+          style={{
+            backgroundColor: "#EBEDEF",
+            width: "25%",
+            margin: "0px 10px",
+          }}
+          onChange={(e) => {
+            setRole(e.target.value);
+          }}
+        >
+          {/* <option selected>{Role} </option> */}
+          <hr />
+          <option value="allUsers">All Users</option>
+          <option value="Admin">Admin</option>
+          <option value="Supplier">Supplier</option>
+          <option value="Customer">Customer</option>
+        </select>
+        <table className="table table-hover table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -71,18 +91,32 @@ export default function GetAllUsers() {
             </tr>
           </thead>
           <tbody>
-            {Data.map((users, index) => {
-              return (
-                <tr>
-                  <th scope="row">{index + 1}</th>
-                  <td>{users.id}</td>
-                  <td>{users.name}</td>
-                  <td>{users.roleName}</td>
-                </tr>
-              );
-            })}
+            {Response.data &&
+              Response.data.map((users, index) => {
+                if (users.roleName == Role) {
+                  return (
+                    <tr>
+                      <th scope="row">{index + 1}</th>
+                      <td>{users.id}</td>
+                      <td>{users.name}</td>
+                      <td>{users.roleName}</td>
+                    </tr>
+                  );
+                } else if (Role == "allUsers") {
+                  return (
+                    <tr>
+                      <th scope="row">{index + 1}</th>
+                      <td>{users.id}</td>
+                      <td>{users.name}</td>
+                      <td>{users.roleName}</td>
+                    </tr>
+                  );
+                }
+              })}
           </tbody>
+          {/* <ToastContainer /> */}
         </table>
+        {newSupplierModal && <AddSupplier modal={setNewSupplierModal} />}
       </div>
     );
   }
