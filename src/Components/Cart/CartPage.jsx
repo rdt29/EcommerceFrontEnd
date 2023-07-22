@@ -11,7 +11,7 @@ export default function CartPage() {
       (item, index, arr) => index === arr.findIndex((o) => o.id === item.id)
     );
 
-    console.log("uniqueArray: ", uniqueArray);
+
 
     return Array.from(uniqueArray).map((unique, index) => {
       let count = 0;

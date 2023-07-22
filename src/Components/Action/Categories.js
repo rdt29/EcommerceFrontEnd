@@ -118,7 +118,7 @@ export const deleteCategories = (id) => {
       .delete(`https://localhost:7277/api/Categories/Delete-by-id?id=${id}`)
       .then((data) => {
         dispatch(deleteCategoriesSuccess(data.data));
-        toast.error("Category Deleted!");
+        toast.error("Categorie Deleted!");
         dispatch(FetchCategories());
       })
       .catch((error) => {
@@ -145,7 +145,7 @@ export const addCategories = (name) => {
       );
       // console.log("response: ", response);
       await dispatch(addCategorySuccess(response.data));
-      toast.success("Category Added !");
+      toast.success("Categorie Added !");
       await dispatch(FetchCategories());
     } catch (error) {
       // console.log("error: ", error);
